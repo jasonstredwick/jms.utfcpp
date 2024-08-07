@@ -24,26 +24,26 @@
 namespace utfcpp {
 
 
-    class exception : public ::std::exception {};
-    class not_enough_room : public utfcpp::exception {};
-    class invalid_lead : public utfcpp::exception {};
-    class incomplete_sequence : public utfcpp::exception {};
-    class overlong_sequence : public utfcpp::exception {};
-    class invalid_code_point : public utfcpp::exception {};
+class exception : public ::std::exception {};
+class not_enough_room : public utfcpp::exception {};
+class invalid_lead : public utfcpp::exception {};
+class incomplete_sequence : public utfcpp::exception {};
+class overlong_sequence : public utfcpp::exception {};
+class invalid_code_point : public utfcpp::exception {};
 
 
-    class encoding_error : public std::runtime_error {
-        using std::runtime_error::runtime_error;
-    };
+class encoding_error : public std::runtime_error {
+    using std::runtime_error::runtime_error;
+};
 
 
-    class decoding_error : public std::runtime_error {
-        using std::runtime_error::runtime_error;
-    };
+class decoding_error : public std::runtime_error {
+    using std::runtime_error::runtime_error;
+};
 
 
-    auto on_decode_error_throw_f = [](UTF_ERROR e) { throw decoding_error{utfcpp::to_string(e)}; };
-    auto on_encode_error_throw_f = [](UTF_ERROR e) { throw encoding_error{utfcpp::to_string(e)}; };
+auto on_decode_error_throw_f = [](UTF_ERROR e) { throw decoding_error{utfcpp::to_string(e)}; };
+auto on_encode_error_throw_f = [](UTF_ERROR e) { throw encoding_error{utfcpp::to_string(e)}; };
 
 
 } // namespace utfcpp

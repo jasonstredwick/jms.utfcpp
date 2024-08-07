@@ -176,15 +176,15 @@ public:
         }
         return *this;
     }
- 
+
     constexpr utf_input_iterator operator++(int) noexcept { auto tmp = *this; ++*this; return tmp; }
- 
+
     constexpr value_type operator*() const noexcept {
         if (rng.empty()) { return REPLACEMENT_CHARACTER; }
         value_type code_point = rng.front();
         return is_code_point_valid(code_point) ? code_point : REPLACEMENT_CHARACTER;
     }
- 
+
     constexpr string_view_type data() const noexcept { return rng; }
 
     constexpr std::tuple<value_type, UTF_ERROR> decode() const noexcept {
