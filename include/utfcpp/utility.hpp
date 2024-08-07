@@ -32,75 +32,75 @@
 namespace utfcpp {
 
 
-template <is_utf_c T, template<typename> typename Iter_t=utf_input_iterator>
-constexpr size_t find_invalid(std::basic_string_view<T> src) {
-    utf_view<T, Iter_t> view{src};
+template <IsUTF_c T, template<typename> typename Iter_t=UTFInputIterator>
+constexpr size_t FindInvalid(std::basic_string_view<T> src) {
+    UTFView<T, Iter_t> view{src};
     auto src_iter = view.begin();
     for (; src_iter != view.end(); ++src_iter) {
-        auto error_code = src_iter.decode_error();
+        auto error_code = src_iter.DecodeError();
         if (error_code != UTF_ERROR::OK) {
             break;
         }
     }
-    auto src_remaining = src_iter.data();
+    auto src_remaining = src_iter.Data();
     return src.size() - src_remaining.size();
 }
 
 
-template <is_utf_c T, template<typename> typename Iter_t=utf_input_iterator>
-constexpr bool is_valid(std::basic_string_view<T> src) noexcept {
-    return find_invalid<T, Iter_t>(src) >= src.size();
+template <IsUTF_c T, template<typename> typename Iter_t=UTFInputIterator>
+constexpr bool IsValid(std::basic_string_view<T> src) noexcept {
+    return FindInvalid<T, Iter_t>(src) >= src.size();
 }
 
 
 // Assumes input is validated; will replace invalid code points with REPLACEMENT_CHARACTER.
 // User can consider using shrink_to_fit to reduce overall allocated size if concerned about footprint.
-template <typename Src_t, is_utf_c Dst_t, template<typename> typename Iter_t=utf_input_iterator>
-constexpr std::basic_string<Dst_t> utf_convert_to(std::basic_string_view<Src_t> src) {
+template <typename Src_t, IsUTF_c Dst_t, template<typename> typename Iter_t=UTFInputIterator>
+constexpr std::basic_string<Dst_t> UTFConvertTo(std::basic_string_view<Src_t> src) {
     std::basic_string<Dst_t> result{};
     result.reserve(src.size()); // TODO: pre-allocate return string in a smarter way
-    std::ranges::transform(utf_view<Src_t, Iter_t>{src}, code_point_appender(result), std::identity{});
+    std::ranges::transform(UTFView<Src_t, Iter_t>{src}, CodePointAppender(result), std::identity{});
     return result;
 }
 
-template <template<typename> typename Iter_t=utf_input_iterator>
-constexpr std::u8string utf8_to_8(std::u8string_view sv)     { return utf_convert_to<char8_t,  char8_t,  Iter_t>(sv); }
+template <template<typename> typename Iter_t=UTFInputIterator>
+constexpr std::u8string utf8_to_8(std::u8string_view sv)     { return UTFConvertTo<char8_t,  char8_t,  Iter_t>(sv); }
 
-template <template<typename> typename Iter_t=utf_input_iterator>
-constexpr std::u16string utf8_to_16(std::u8string_view sv)   { return utf_convert_to<char8_t,  char16_t, Iter_t>(sv); }
+template <template<typename> typename Iter_t=UTFInputIterator>
+constexpr std::u16string utf8_to_16(std::u8string_view sv)   { return UTFConvertTo<char8_t,  char16_t, Iter_t>(sv); }
 
-template <template<typename> typename Iter_t=utf_input_iterator>
-constexpr std::u32string utf8_to_32(std::u8string_view sv)   { return utf_convert_to<char8_t,  char32_t, Iter_t>(sv); }
+template <template<typename> typename Iter_t=UTFInputIterator>
+constexpr std::u32string utf8_to_32(std::u8string_view sv)   { return UTFConvertTo<char8_t,  char32_t, Iter_t>(sv); }
 
-template <template<typename> typename Iter_t=utf_input_iterator>
-constexpr std::u8string utf16_to_8(std::u16string_view sv)   { return utf_convert_to<char16_t, char8_t,  Iter_t>(sv); }
+template <template<typename> typename Iter_t=UTFInputIterator>
+constexpr std::u8string utf16_to_8(std::u16string_view sv)   { return UTFConvertTo<char16_t, char8_t,  Iter_t>(sv); }
 
-template <template<typename> typename Iter_t=utf_input_iterator>
-constexpr std::u16string utf16_to_16(std::u16string_view sv) { return utf_convert_to<char16_t, char16_t, Iter_t>(sv); }
+template <template<typename> typename Iter_t=UTFInputIterator>
+constexpr std::u16string utf16_to_16(std::u16string_view sv) { return UTFConvertTo<char16_t, char16_t, Iter_t>(sv); }
 
-template <template<typename> typename Iter_t=utf_input_iterator>
-constexpr std::u32string utf16_to_32(std::u16string_view sv) { return utf_convert_to<char16_t, char32_t, Iter_t>(sv); }
+template <template<typename> typename Iter_t=UTFInputIterator>
+constexpr std::u32string utf16_to_32(std::u16string_view sv) { return UTFConvertTo<char16_t, char32_t, Iter_t>(sv); }
 
-template <template<typename> typename Iter_t=utf_input_iterator>
-constexpr std::u8string utf32_to_8(std::u32string_view sv)   { return utf_convert_to<char32_t, char8_t,  Iter_t>(sv); }
+template <template<typename> typename Iter_t=UTFInputIterator>
+constexpr std::u8string utf32_to_8(std::u32string_view sv)   { return UTFConvertTo<char32_t, char8_t,  Iter_t>(sv); }
 
-template <template<typename> typename Iter_t=utf_input_iterator>
-constexpr std::u16string utf32_to_16(std::u32string_view sv) { return utf_convert_to<char32_t, char16_t, Iter_t>(sv); }
+template <template<typename> typename Iter_t=UTFInputIterator>
+constexpr std::u16string utf32_to_16(std::u32string_view sv) { return UTFConvertTo<char32_t, char16_t, Iter_t>(sv); }
 
-template <template<typename> typename Iter_t=utf_input_iterator>
-constexpr std::u32string utf32_to_32(std::u32string_view sv) { return utf_convert_to<char32_t, char32_t, Iter_t>(sv); }
+template <template<typename> typename Iter_t=UTFInputIterator>
+constexpr std::u32string utf32_to_32(std::u32string_view sv) { return UTFConvertTo<char32_t, char32_t, Iter_t>(sv); }
 
 
 #if 0
-template <is_utf_c Src_t, is_utf_c Dst_t, template<typename> typename Iter_t=utf_input_iterator>
-constexpr std::tuple<size_t, UTF_ERROR> utf_attempt_convert_to(std::basic_string_view<Src_t>& src,
-                                                                                std::basic_string<Dst_t>& dst) {
+template <IsUTF_c Src_t, IsUTF_c Dst_t, template<typename> typename Iter_t=UTFInputIterator>
+constexpr std::tuple<size_t, UTF_ERROR> UTFAttemptConvertTo(std::basic_string_view<Src_t>& src,
+                                                            std::basic_string<Dst_t>& dst) {
     auto src_end_iter = Iter_t<Src_t>::Sentinel();
-    auto dst_iter = code_point_appender(dst);
+    auto dst_iter = CodePointAppender(dst);
     for (Iter_t src_iter{src}; src_iter != src_end_iter; ++src_iter, ++dst_iter) {
-        auto [code_point, error_code] = src_iter.decode();
+        auto [code_point, error_code] = src_iter.Decode();
         if (error_code != UTF_ERROR::OK) {
-            auto src_remaining = src_iter.data();
+            auto src_remaining = src_iter.Data();
             size_t consumed = src.size() - src_remaining.size();
             return {consumed, error_code};
         }

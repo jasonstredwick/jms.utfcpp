@@ -29,13 +29,13 @@
 namespace utfcpp {
 
 
-template <is_utf_c T, template <typename> typename Iter_t=utf_input_iterator>
-class utf_view : public std::ranges::view_interface<utf_view<T, Iter_t>> {
+template <IsUTF_c T, template <typename> typename Iter_t=UTFInputIterator>
+class UTFView : public std::ranges::view_interface<UTFView<T, Iter_t>> {
 public:
     using string_view_type = std::basic_string_view<T>;
     using utf_interator_type = Iter_t<T>;
 
-    constexpr utf_view(string_view_type str_view) noexcept : str_view{str_view} {}
+    constexpr UTFView(string_view_type str_view) noexcept : str_view{str_view} {}
 
     constexpr auto begin() const noexcept { return utf_interator_type{str_view}; }
     constexpr auto end() const noexcept { return typename utf_interator_type::sentinel{}; }
@@ -49,9 +49,9 @@ private:
     string_view_type str_view;
 };
 
-template <template<typename> typename Iter_t=utf_input_iterator> using utf8_view = utf_view<char8_t, Iter_t>;
-template <template<typename> typename Iter_t=utf_input_iterator> using utf16_view = utf_view<char16_t, Iter_t>;
-template <template<typename> typename Iter_t=utf_input_iterator> using utf32_view = utf_view<char32_t, Iter_t>;
+template <template<typename> typename Iter_t=UTFInputIterator> using utf8_view = UTFView<char8_t, Iter_t>;
+template <template<typename> typename Iter_t=UTFInputIterator> using utf16_view = UTFView<char16_t, Iter_t>;
+template <template<typename> typename Iter_t=UTFInputIterator> using utf32_view = UTFView<char32_t, Iter_t>;
 
 
 } // namespace utfcpp

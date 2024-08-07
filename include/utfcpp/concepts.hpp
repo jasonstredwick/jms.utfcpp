@@ -21,9 +21,11 @@
 namespace utfcpp {
 
 
-template <typename T> concept is_utf_c = std::same_as<T, char8_t>  ||
-                                         std::same_as<T, char16_t> ||
-                                         std::same_as<T, char32_t>;
+template <typename T> concept IsUTF_c = std::same_as<T, char8_t>  ||
+                                        std::same_as<T, char16_t> ||
+                                        std::same_as<T, char32_t>;
+
+
 
 
 } // namespace utfcpp

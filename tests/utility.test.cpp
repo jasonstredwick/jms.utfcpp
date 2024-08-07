@@ -15,19 +15,19 @@
 #include "utfcpp/utfcpp.hpp"
 #include "ftest.h"
 
-TEST(UtilityTests, test_find_invalid)
+TEST(UtilityTests, test_FindInvalid)
 {
     using namespace utfcpp;
-    EXPECT_EQ(find_invalid(std::u8string_view{}), 0);
-    EXPECT_EQ(find_invalid(std::u16string_view{}), 0);
-    EXPECT_EQ(find_invalid(std::u32string_view{}), 0);
+    EXPECT_EQ(FindInvalid(std::u8string_view{}), 0);
+    EXPECT_EQ(FindInvalid(std::u16string_view{}), 0);
+    EXPECT_EQ(FindInvalid(std::u32string_view{}), 0);
 
     std::u8string valid1{u8"abcdxyzшницла水手𐌀"};
-    EXPECT_EQ(find_invalid<char8_t>(valid1), valid1.size());
+    EXPECT_EQ(FindInvalid<char8_t>(valid1), valid1.size());
     std::u16string valid2{u"abcdxyzшницла水手𐌀"};
-    EXPECT_EQ(find_invalid<char16_t>(valid2), valid2.size());
+    EXPECT_EQ(FindInvalid<char16_t>(valid2), valid2.size());
     std::u32string valid3{U"abcdxyzшницла水手𐌀"};
-    EXPECT_EQ(find_invalid<char32_t>(valid3), valid3.size());
+    EXPECT_EQ(FindInvalid<char32_t>(valid3), valid3.size());
 
     // \xfa is invalid (unexpected continuation byte)
     std::u8string invalid1{{0xe6, 0x97, 0xa5, 0xd1, 0x88, 0xfa}};
@@ -39,27 +39,27 @@ TEST(UtilityTests, test_find_invalid)
     std::u32string invalid5{{0x000065e5, 0x00000448, 0x0011ffff}};
     std::u32string invalid6{{0x000065e5, 0x00000448, 0x0011ffff, 0x000065e5, 0x00000448}};
 
-    EXPECT_EQ(find_invalid<char8_t>(invalid1), 5);
-    EXPECT_EQ(find_invalid<char8_t>(invalid2), 5);
-    EXPECT_EQ(find_invalid<char16_t>(invalid3), 2);
-    EXPECT_EQ(find_invalid<char16_t>(invalid4), 2);
-    EXPECT_EQ(find_invalid<char32_t>(invalid5), 2);
-    EXPECT_EQ(find_invalid<char32_t>(invalid6), 2);
+    EXPECT_EQ(FindInvalid<char8_t>(invalid1), 5);
+    EXPECT_EQ(FindInvalid<char8_t>(invalid2), 5);
+    EXPECT_EQ(FindInvalid<char16_t>(invalid3), 2);
+    EXPECT_EQ(FindInvalid<char16_t>(invalid4), 2);
+    EXPECT_EQ(FindInvalid<char32_t>(invalid5), 2);
+    EXPECT_EQ(FindInvalid<char32_t>(invalid6), 2);
 }
 
 TEST(UtilityTests, test_is_invalid)
 {
     using namespace utfcpp;
-    EXPECT_TRUE(is_valid(std::u8string_view{}));
-    EXPECT_TRUE(is_valid(std::u16string_view{}));
-    EXPECT_TRUE(is_valid(std::u32string_view{}));
+    EXPECT_TRUE(IsValid(std::u8string_view{}));
+    EXPECT_TRUE(IsValid(std::u16string_view{}));
+    EXPECT_TRUE(IsValid(std::u32string_view{}));
 
     std::u8string valid1{u8"abcdxyzшницла水手𐌀"};
-    EXPECT_TRUE(is_valid<char8_t>(valid1));
+    EXPECT_TRUE(IsValid<char8_t>(valid1));
     std::u16string valid2{u"abcdxyzшницла水手𐌀"};
-    EXPECT_TRUE(is_valid<char16_t>(valid2));
+    EXPECT_TRUE(IsValid<char16_t>(valid2));
     std::u32string valid3{U"abcdxyzшницла水手𐌀"};
-    EXPECT_TRUE(is_valid<char32_t>(valid3));
+    EXPECT_TRUE(IsValid<char32_t>(valid3));
 
     // \xfa is invalid (unexpected continuation byte)
     std::u8string invalid1{{0xe6, 0x97, 0xa5, 0xd1, 0x88, 0xfa}};
@@ -71,16 +71,16 @@ TEST(UtilityTests, test_is_invalid)
     std::u32string invalid5{{0x000065e5, 0x00000448, 0x0011ffff}};
     std::u32string invalid6{{0x000065e5, 0x00000448, 0x0011ffff, 0x000065e5, 0x00000448}};
 
-    EXPECT_FALSE(is_valid<char8_t>(invalid1));
-    EXPECT_FALSE(is_valid<char8_t>(invalid2));
-    EXPECT_FALSE(is_valid<char16_t>(invalid3));
-    EXPECT_FALSE(is_valid<char16_t>(invalid4));
-    EXPECT_FALSE(is_valid<char32_t>(invalid5));
-    EXPECT_FALSE(is_valid<char32_t>(invalid6));
+    EXPECT_FALSE(IsValid<char8_t>(invalid1));
+    EXPECT_FALSE(IsValid<char8_t>(invalid2));
+    EXPECT_FALSE(IsValid<char16_t>(invalid3));
+    EXPECT_FALSE(IsValid<char16_t>(invalid4));
+    EXPECT_FALSE(IsValid<char32_t>(invalid5));
+    EXPECT_FALSE(IsValid<char32_t>(invalid6));
 }
 
 /***
- * Test utf_convert_to
+ * Test UTFConvertTo
  * NOTE: Need to include more codepoints that test u16 surrogate values.
  */
 TEST(UtilityTests, test_utf8_to_8)

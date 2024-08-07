@@ -15,67 +15,67 @@
 #include "utfcpp/utfcpp.hpp"
 #include "ftest.h"
 
-TEST(CoreTests, test_is_utf8_trail)
+TEST(CoreTests, test_IsTrailUTF8)
 {
     using namespace utfcpp;
-    EXPECT_FALSE(is_utf8_trail('a'));
-    EXPECT_FALSE(is_utf8_trail('\x7F'));
+    EXPECT_FALSE(IsTrailUTF8('a'));
+    EXPECT_FALSE(IsTrailUTF8('\x7F'));
 
-    EXPECT_TRUE(is_utf8_trail(static_cast<char8_t>('\x80')));
-    EXPECT_TRUE(is_utf8_trail(static_cast<char8_t>('\x99')));
+    EXPECT_TRUE(IsTrailUTF8(static_cast<char8_t>('\x80')));
+    EXPECT_TRUE(IsTrailUTF8(static_cast<char8_t>('\x99')));
 }
 
-TEST(CoreTests, test_is_utf16_lead_surrogate)
+TEST(CoreTests, test_IsLeadSurrogateUTF16)
 {
     using namespace utfcpp;
-    EXPECT_FALSE(is_utf16_lead_surrogate(u'\u0000'));
-    EXPECT_FALSE(is_utf16_lead_surrogate(u'z'));
-    EXPECT_FALSE(is_utf16_lead_surrogate(u'\ud7ff'));
+    EXPECT_FALSE(IsLeadSurrogateUTF16(u'\u0000'));
+    EXPECT_FALSE(IsLeadSurrogateUTF16(u'z'));
+    EXPECT_FALSE(IsLeadSurrogateUTF16(u'\ud7ff'));
 
-    EXPECT_TRUE(is_utf16_lead_surrogate(u'\xd800'));
-    EXPECT_TRUE(is_utf16_lead_surrogate(u'\xdab0'));
-    EXPECT_TRUE(is_utf16_lead_surrogate(u'\xdbff'));
+    EXPECT_TRUE(IsLeadSurrogateUTF16(u'\xd800'));
+    EXPECT_TRUE(IsLeadSurrogateUTF16(u'\xdab0'));
+    EXPECT_TRUE(IsLeadSurrogateUTF16(u'\xdbff'));
 
-    EXPECT_FALSE(is_utf16_lead_surrogate(u'\xdc00'));
-    EXPECT_FALSE(is_utf16_lead_surrogate(u'\xdfff'));
+    EXPECT_FALSE(IsLeadSurrogateUTF16(u'\xdc00'));
+    EXPECT_FALSE(IsLeadSurrogateUTF16(u'\xdfff'));
 
-    EXPECT_FALSE(is_utf16_lead_surrogate(u'\uefff'));
+    EXPECT_FALSE(IsLeadSurrogateUTF16(u'\uefff'));
 }
 
-TEST(CoreTests, test_is_utf16_trail_surrogate)
+TEST(CoreTests, test_IsTrailSurrogateUTF16)
 {
     using namespace utfcpp;
-    EXPECT_FALSE(is_utf16_trail_surrogate(u'\u0000'));
-    EXPECT_FALSE(is_utf16_trail_surrogate(u'z'));
-    EXPECT_FALSE(is_utf16_trail_surrogate(u'\ud7ff'));
+    EXPECT_FALSE(IsTrailSurrogateUTF16(u'\u0000'));
+    EXPECT_FALSE(IsTrailSurrogateUTF16(u'z'));
+    EXPECT_FALSE(IsTrailSurrogateUTF16(u'\ud7ff'));
 
-    EXPECT_FALSE(is_utf16_trail_surrogate(u'\xd800'));
-    EXPECT_FALSE(is_utf16_trail_surrogate(u'\xdbff'));
+    EXPECT_FALSE(IsTrailSurrogateUTF16(u'\xd800'));
+    EXPECT_FALSE(IsTrailSurrogateUTF16(u'\xdbff'));
 
-    EXPECT_TRUE(is_utf16_trail_surrogate(u'\xdc00'));
-    EXPECT_TRUE(is_utf16_trail_surrogate(u'\xde02'));
-    EXPECT_TRUE(is_utf16_trail_surrogate(u'\xdfff'));
-    EXPECT_FALSE(is_utf16_trail_surrogate(u'\xe000'));
+    EXPECT_TRUE(IsTrailSurrogateUTF16(u'\xdc00'));
+    EXPECT_TRUE(IsTrailSurrogateUTF16(u'\xde02'));
+    EXPECT_TRUE(IsTrailSurrogateUTF16(u'\xdfff'));
+    EXPECT_FALSE(IsTrailSurrogateUTF16(u'\xe000'));
 
-    EXPECT_FALSE(is_utf16_lead_surrogate(u'\uefff'));
+    EXPECT_FALSE(IsLeadSurrogateUTF16(u'\uefff'));
 }
 
-TEST(CoreTests, test_is_utf16_surrogate)
+TEST(CoreTests, test_IsSurrogateUTF16)
 {
     using namespace utfcpp;
-    EXPECT_FALSE(is_utf16_surrogate(u'\u0000'));
-    EXPECT_FALSE(is_utf16_surrogate(U'z'));
-    EXPECT_FALSE(is_utf16_surrogate(u'\ud7ff'));
+    EXPECT_FALSE(IsSurrogateUTF16(u'\u0000'));
+    EXPECT_FALSE(IsSurrogateUTF16(U'z'));
+    EXPECT_FALSE(IsSurrogateUTF16(u'\ud7ff'));
 
-    EXPECT_TRUE(is_utf16_surrogate(u'\xd800'));
-    EXPECT_TRUE(is_utf16_surrogate(u'\xdbff'));
-    EXPECT_TRUE(is_utf16_surrogate(u'\xdc00'));
-    EXPECT_TRUE(is_utf16_surrogate(u'\xde02'));
-    EXPECT_TRUE(is_utf16_surrogate(u'\xdfff'));
-    EXPECT_FALSE(is_utf16_surrogate(u'\xe000'));
+    EXPECT_TRUE(IsSurrogateUTF16(u'\xd800'));
+    EXPECT_TRUE(IsSurrogateUTF16(u'\xdbff'));
+    EXPECT_TRUE(IsSurrogateUTF16(u'\xdc00'));
+    EXPECT_TRUE(IsSurrogateUTF16(u'\xde02'));
+    EXPECT_TRUE(IsSurrogateUTF16(u'\xdfff'));
+    EXPECT_FALSE(IsSurrogateUTF16(u'\xe000'));
 
-    EXPECT_FALSE(is_utf16_surrogate(u'\uefff'));
-    EXPECT_FALSE(is_utf16_surrogate(U'\U001012af'));
+    EXPECT_FALSE(IsSurrogateUTF16(u'\uefff'));
+    EXPECT_FALSE(IsSurrogateUTF16(U'\U001012af'));
 }
 
 TEST(CoreTests, test_is_code_point_valid)
@@ -88,83 +88,83 @@ TEST(CoreTests, test_is_code_point_valid)
     EXPECT_TRUE(is_code_point_valid(U'\x99'));
 }
 
-TEST(CoreTests, test_sequence_length)
+TEST(CoreTests, test_SequenceLength)
 {
     using namespace utfcpp;
-    EXPECT_EQ(sequence_length(u8'Z'), 1);
-    EXPECT_EQ(sequence_length(static_cast<char8_t>(0x79)), 1);
-    EXPECT_EQ(sequence_length(static_cast<char8_t>(0xc2)), 2);
-    EXPECT_EQ(sequence_length(static_cast<char8_t>(0xe0)), 3);
-    EXPECT_EQ(sequence_length(static_cast<char8_t>(0xf0)), 4);
+    EXPECT_EQ(SequenceLength(u8'Z'), 1);
+    EXPECT_EQ(SequenceLength(static_cast<char8_t>(0x79)), 1);
+    EXPECT_EQ(SequenceLength(static_cast<char8_t>(0xc2)), 2);
+    EXPECT_EQ(SequenceLength(static_cast<char8_t>(0xe0)), 3);
+    EXPECT_EQ(SequenceLength(static_cast<char8_t>(0xf0)), 4);
 }
 
-TEST(CoreTests, test_utf8_decode)
+TEST(CoreTests, test_DecodeUTF8)
 {
     using namespace utfcpp;
     char32_t cp = 0;
 
     std::u8string_view ascii{u8"abcdxyz"};
-    DecodeData data = utf8_decode(ascii);
+    DecodeData data = DecodeUTF8(ascii);
     EXPECT_EQ(data.error_code, UTF_ERROR::OK);
     EXPECT_EQ(data.code_point, U'a');
     EXPECT_EQ(data.consumed, 1);
 
     std::u8string_view cyrillic {u8"шницла"}; // "steak"
-    data = utf8_decode(cyrillic);
+    data = DecodeUTF8(cyrillic);
     EXPECT_EQ(data.error_code, UTF_ERROR::OK);
     EXPECT_EQ(data.code_point, U'ш');
     EXPECT_EQ(data.consumed, 2);
 
     std::u8string_view chinese {u8"水手"}; // "sailor"
-    data = utf8_decode(chinese);
+    data = DecodeUTF8(chinese);
     EXPECT_EQ(data.error_code, UTF_ERROR::OK);
     EXPECT_EQ(data.code_point, U'水');
     EXPECT_EQ(data.consumed, 3);
 
     std::u8string_view etruscan {u8"𐌀"};
-    data = utf8_decode(etruscan);
+    data = DecodeUTF8(etruscan);
     EXPECT_EQ(data.error_code, UTF_ERROR::OK);
     EXPECT_EQ(data.code_point, U'𐌀');
     EXPECT_EQ(data.consumed, 4);
 }
 
-TEST(CoreTests, test_utf8_encode)
+TEST(CoreTests, test_EncodeUTF8)
 {
     using namespace utfcpp;
     std::u8string utf8str{};
 
-    utf8str = utf8_encode(U'a');
+    utf8str = EncodeUTF8(U'a');
     EXPECT_EQ(utf8str, u8"a");
 
-    utf8str = utf8_encode(U'ц');
+    utf8str = EncodeUTF8(U'ц');
     EXPECT_EQ(utf8str, u8"ц");
 
-    utf8str = utf8_encode(U'水');
+    utf8str = EncodeUTF8(U'水');
     EXPECT_EQ(utf8str, u8"水");
 
-    utf8str = utf8_encode(U'𐌀');
+    utf8str = EncodeUTF8(U'𐌀');
     EXPECT_EQ(utf8str, u8"𐌀");
 }
 
-TEST(CoreTests, test_utf16_decode)
+TEST(CoreTests, test_DecodeUTF16)
 {
     using namespace utfcpp;
     char32_t cp = 0;
 
     std::u16string_view ascii{u"abcdxyz"};
-    DecodeData data = utf16_decode(ascii);
+    DecodeData data = DecodeUTF16(ascii);
     EXPECT_EQ(data.error_code, UTF_ERROR::OK);
     EXPECT_EQ(data.code_point, U'a');
     EXPECT_EQ(data.consumed, 1);
 
     std::u16string_view cyrillic {u"шницла"}; // "steak"
-    data = utf16_decode(cyrillic);
+    data = DecodeUTF16(cyrillic);
     EXPECT_EQ(data.error_code, UTF_ERROR::OK);
     EXPECT_EQ(data.code_point, U'ш');
     EXPECT_EQ(data.consumed, 1);
 
     std::u16string_view etruscan {u"𐌀"};
-    data = utf16_decode(etruscan);
+    data = DecodeUTF16(etruscan);
     EXPECT_EQ(data.error_code, UTF_ERROR::OK);
     EXPECT_EQ(data.code_point, U'𐌀');
     EXPECT_EQ(data.consumed, 2);

@@ -33,12 +33,12 @@ struct DecodeData {
 };
 
 
-constexpr DecodeData utf8_decode(std::u8string_view utf8str) noexcept {
+constexpr DecodeData DecodeUTF8(std::u8string_view utf8str) noexcept {
     if (utf8str.empty()) { return DecodeData{.error_code=UTF_ERROR::INCOMPLETE_SEQUENCE}; }
 
     // Expected byte length of the utf-8 sequence, according to the lead byte
     const char8_t lead = utf8str[0];
-    const size_t length = sequence_length(lead);
+    const size_t length = SequenceLength(lead);
     if (!length) { return DecodeData{.consumed=1, .error_code=UTF_ERROR::INVALID_LEAD}; }
     else if (length == 1) {
         // No need to go through error checks here
@@ -54,7 +54,7 @@ constexpr DecodeData utf8_decode(std::u8string_view utf8str) noexcept {
     // 2) some of the expected trail bytes have invalid value
     if (length > utf8str.length()) { return DecodeData{.consumed=1, .error_code=UTF_ERROR::INCOMPLETE_SEQUENCE}; }
     for (char8_t cp : utf8str | std::views::take(length) | std::views::drop(1)) {
-        if (!is_utf8_trail(cp)) {
+        if (!IsTrailUTF8(cp)) {
             return DecodeData{.consumed=1, .error_code=UTF_ERROR::INCOMPLETE_SEQUENCE};
         }
     }
@@ -85,7 +85,7 @@ constexpr DecodeData utf8_decode(std::u8string_view utf8str) noexcept {
     if (!is_code_point_valid(code_point))        {
         return DecodeData{.consumed=1, .error_code=UTF_ERROR::INVALID_CODE_POINT};
     }
-    if(is_overlong_sequence(code_point, length)) {
+    if(IsOverlongSequence(code_point, length)) {
         return DecodeData{.consumed=1, .error_code=UTF_ERROR::OVERLONG_SEQUENCE};
     }
 
@@ -98,7 +98,7 @@ constexpr DecodeData utf8_decode(std::u8string_view utf8str) noexcept {
 }
 
 // Assumes code_point has been validated; will be converted to REPLACEMENT_CHARACTER if not valid.
-constexpr std::u8string utf8_encode(char32_t code_point) {
+constexpr std::u8string EncodeUTF8(char32_t code_point) {
     if (!is_code_point_valid(code_point)) { code_point = REPLACEMENT_CHARACTER; }
     if (code_point < 0x80) {                     // 1 byte
         return std::u8string{{static_cast<char8_t>(code_point)}};
@@ -122,11 +122,11 @@ constexpr std::u8string utf8_encode(char32_t code_point) {
     }};
 }
 
-constexpr DecodeData utf16_decode(std::u16string_view utf16str) noexcept {
+constexpr DecodeData DecodeUTF16(std::u16string_view utf16str) noexcept {
     if (utf16str.empty()) { return DecodeData{.error_code=UTF_ERROR::INCOMPLETE_SEQUENCE}; }
 
     const char16_t first_word = utf16str[0];
-    if (!is_utf16_surrogate(first_word)) {
+    if (!IsSurrogateUTF16(first_word)) {
         return DecodeData{
             .consumed=1,
             .code_point=static_cast<char32_t>(first_word),
@@ -136,12 +136,12 @@ constexpr DecodeData utf16_decode(std::u16string_view utf16str) noexcept {
 
     if (utf16str.length() < 2) {
         return DecodeData{.consumed=1, .error_code=UTF_ERROR::INCOMPLETE_SEQUENCE};
-    } else if (!is_utf16_lead_surrogate(first_word)) {
+    } else if (!IsLeadSurrogateUTF16(first_word)) {
         return DecodeData{.consumed=1, .error_code=UTF_ERROR::INVALID_LEAD};
     }
 
     const char16_t second_word = utf16str[1];
-    if (!is_utf16_trail_surrogate(second_word)) {
+    if (!IsTrailSurrogateUTF16(second_word)) {
         return DecodeData{.consumed=1, .error_code=UTF_ERROR::INCOMPLETE_SEQUENCE};
     }
 
@@ -160,9 +160,9 @@ constexpr DecodeData utf16_decode(std::u16string_view utf16str) noexcept {
 }
 
 // Assumes code_point has been validated; will be converted to REPLACEMENT_CHARACTER if not valid.
-constexpr std::u16string utf16_encode(char32_t code_point) {
+constexpr std::u16string EncodeUTF16(char32_t code_point) {
     if (!is_code_point_valid(code_point)) { code_point = REPLACEMENT_CHARACTER; }
-    if (is_in_bmp(code_point)) { return std::u16string{{static_cast<char16_t>(code_point)}}; }
+    if (IsInBMP(code_point)) { return std::u16string{{static_cast<char16_t>(code_point)}}; }
     // Code points from the supplementary planes are encoded via surrogate pairs
     return std::u16string{{
         static_cast<char16_t>(LEAD_OFFSET + (code_point >> 10)),

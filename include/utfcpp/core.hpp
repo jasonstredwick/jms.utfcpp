@@ -57,37 +57,37 @@ constexpr char32_t REPLACEMENT_CHARACTER {U'\ufffd'};
 /***
  * codepoint tests
  */
-constexpr bool is_utf8_trail(char8_t ch) noexcept {
+constexpr bool IsTrailUTF8(char8_t ch) noexcept {
     return ch > TRAIL_UTF8_MIN;
 }
 
 
-constexpr bool is_utf16_lead_surrogate(char16_t cp) noexcept {
+constexpr bool IsLeadSurrogateUTF16(char16_t cp) noexcept {
     return cp >= LEAD_SURROGATE_MIN && cp <= LEAD_SURROGATE_MAX;
 }
 
 
-constexpr bool is_utf16_trail_surrogate(char16_t cp) noexcept {
+constexpr bool IsTrailSurrogateUTF16(char16_t cp) noexcept {
     return cp >= TRAIL_SURROGATE_MIN && cp <= TRAIL_SURROGATE_MAX;
 }
 
 
-constexpr bool is_utf16_surrogate(char32_t cp) noexcept {
+constexpr bool IsSurrogateUTF16(char32_t cp) noexcept {
     return cp >= LEAD_SURROGATE_MIN  && cp <= TRAIL_SURROGATE_MAX;
 }
 
 
 constexpr bool is_code_point_valid(char32_t cp) noexcept {
-    return cp <= CODE_POINT_MAX && !is_utf16_surrogate(cp);
+    return cp <= CODE_POINT_MAX && !IsSurrogateUTF16(cp);
 }
 
 
-constexpr bool is_in_bmp(char32_t cp) noexcept {
+constexpr bool IsInBMP(char32_t cp) noexcept {
     return cp < U'\U00010000';
 }
 
 
-constexpr bool is_overlong_sequence(const char32_t cp, const size_t length) noexcept {
+constexpr bool IsOverlongSequence(const char32_t cp, const size_t length) noexcept {
     if (cp < 0x80) {
         if (length != 1) { return true; }
     } else if (cp < 0x800) {
@@ -102,7 +102,7 @@ constexpr bool is_overlong_sequence(const char32_t cp, const size_t length) noex
 /***
  * codepoint utilities
  */
-constexpr size_t sequence_length(char8_t lead_byte) noexcept {
+constexpr size_t SequenceLength(char8_t lead_byte) noexcept {
     if (lead_byte < 0x80) { return 1; }
     else if ((lead_byte >> 5) == 0x6) { return 2; }
     else if ((lead_byte >> 4) == 0xe) { return 3; }
@@ -111,12 +111,12 @@ constexpr size_t sequence_length(char8_t lead_byte) noexcept {
 }
 
 
-constexpr size_t sequence_length(char16_t cp) noexcept {
-    return is_utf16_surrogate(cp) ? 2 : 1;
+constexpr size_t SequenceLength(char16_t cp) noexcept {
+    return IsSurrogateUTF16(cp) ? 2 : 1;
 }
 
 
-constexpr std::string to_string(UTF_ERROR e) {
+constexpr std::string ToString(UTF_ERROR e) {
     // eventually replace with c++26 reflection
     switch (e) {
     case UTF_ERROR::OK:
